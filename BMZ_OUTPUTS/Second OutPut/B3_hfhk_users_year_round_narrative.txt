@@ -1,0 +1,3 @@
+B3 (Q3.3): Among HFHK water primary-source households, year-round availability:
+ - No:  19 (14.4%)
+ - Yes: 113 (85.6%)

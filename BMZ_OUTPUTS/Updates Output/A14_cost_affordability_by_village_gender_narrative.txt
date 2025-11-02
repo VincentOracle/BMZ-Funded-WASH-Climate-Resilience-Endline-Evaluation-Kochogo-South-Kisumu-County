@@ -1,0 +1,7 @@
+A14: Cost affordability by village and gender (top response per village):
+ - Borda: Most common = Yes ( 9 households,  90.0%)
+ - Kabong'o: Most common = Yes (26 households, 100.0%)
+ - Kagola West: Most common = Yes (14 households,  93.3%)
+ - Kaswa: Most common = Yes ( 9 households,  90.0%)
+ - Kogola East: Most common = Yes ( 6 households, 100.0%)
+ - Kokech: Most common = Yes (13 households, 100.0%)

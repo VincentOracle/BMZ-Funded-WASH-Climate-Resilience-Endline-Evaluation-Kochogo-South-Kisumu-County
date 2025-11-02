@@ -1,0 +1,4 @@
+A7/A8: Year-round water availability
+ - Yes: 224 (80%)
+ - No: 56 (20%)
+ - Unknown/missing: 

@@ -1,0 +1,3 @@
+A16: Home/farm affected by flood (effectiveness dataset):
+ - No:  92 (32.9%)
+ - Yes: 188 (67.1%)

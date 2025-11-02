@@ -1,0 +1,52 @@
+Primary Water Source by Village Analysis
+=========================================
+
+Summary of water source distribution across villages:
+
+Village: Borda
+Total households: 23
+
+  - HFHK Solar Borehole/Kiosk: 16 (69.6%)
+  - Open wells in homesteads: 5 (21.7%)
+  - Piped HFHK Water: 2 (8.7%)
+
+Village: Kabong'o
+Total households: 84
+
+  - HFHK Solar Borehole/Kiosk: 49 (58.3%)
+  - Open wells in homesteads: 31 (36.9%)
+  - Piped HFHK Water: 1 (1.2%)
+  - Protected public wells: 3 (3.6%)
+
+Village: Kagola West
+Total households: 62
+
+  - HFHK Solar Borehole/Kiosk: 19 (30.6%)
+  - Open wells in homesteads: 20 (32.3%)
+  - Others, specify: 2 (3.2%)
+  - Piped HFHK Water: 4 (6.5%)
+  - Protected public wells: 16 (25.8%)
+  - Rainwater Harvesting: 1 (1.6%)
+
+Village: Kaswa
+Total households: 26
+
+  - HFHK Solar Borehole/Kiosk: 16 (61.5%)
+  - Open wells in homesteads: 6 (23.1%)
+  - Piped HFHK Water: 2 (7.7%)
+  - Protected public wells: 2 (7.7%)
+
+Village: Kogola East
+Total households: 31
+
+  - HFHK Solar Borehole/Kiosk: 10 (32.3%)
+  - Open wells in homesteads: 9 (29%)
+  - Protected public wells: 12 (38.7%)
+
+Village: Kokech
+Total households: 54
+
+  - HFHK Solar Borehole/Kiosk: 13 (24.1%)
+  - Open wells in homesteads: 21 (38.9%)
+  - Protected public wells: 20 (37%)
+

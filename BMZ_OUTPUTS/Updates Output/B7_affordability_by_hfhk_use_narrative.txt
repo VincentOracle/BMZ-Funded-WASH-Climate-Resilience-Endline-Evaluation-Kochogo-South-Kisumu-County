@@ -1,0 +1,4 @@
+B7 (Q3.7): Affordability among HFHK users vs non-users (top categories)
+ - HFHK user / No:   9 (  6.9%)
+ - HFHK user / Yes: 122 ( 93.1%)
+ - Non-HFHK / Yes:  11 (100.0%)

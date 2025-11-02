@@ -1,0 +1,19 @@
+village,gender_hh,at_least_3,n,pct
+Borda,Female,TRUE,12,100
+Borda,Male,TRUE,11,100
+Kabong'o,Female,FALSE,1,2.4
+Kabong'o,Female,TRUE,41,97.6
+Kabong'o,Male,TRUE,42,100
+Kagola West,Female,FALSE,1,3.2
+Kagola West,Female,TRUE,30,96.8
+Kagola West,Male,FALSE,1,3.2
+Kagola West,Male,TRUE,30,96.8
+Kaswa,Female,FALSE,6,46.2
+Kaswa,Female,TRUE,7,53.8
+Kaswa,Male,FALSE,5,38.5
+Kaswa,Male,TRUE,8,61.5
+Kogola East,Female,FALSE,1,6.7
+Kogola East,Female,TRUE,14,93.3
+Kogola East,Male,TRUE,16,100
+Kokech,Female,TRUE,27,100
+Kokech,Male,TRUE,27,100

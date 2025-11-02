@@ -1,0 +1,2 @@
+B12 (Q3.12): Among HFHK latrine users, do all household members use the latrine?
+ - Yes: 37 (100%)

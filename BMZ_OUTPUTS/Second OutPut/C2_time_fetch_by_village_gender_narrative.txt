@@ -1,0 +1,13 @@
+C2 (4.25): Average time to fetch water now (by village and gender):
+ - Borda / Female: Mean=15.0 min (n=12); 0h 15m
+ - Borda / Male: Mean=15.0 min (n=11); 0h 15m
+ - Kabong'o / Female: Mean=15.0 min (n=42); 0h 15m
+ - Kabong'o / Male: Mean=15.0 min (n=42); 0h 15m
+ - Kagola West / Female: Mean=15.0 min (n=31); 0h 15m
+ - Kagola West / Male: Mean=15.0 min (n=31); 0h 15m
+ - Kaswa / Female: Mean=15.0 min (n=13); 0h 15m
+ - Kaswa / Male: Mean=15.0 min (n=13); 0h 15m
+ - Kogola East / Female: Mean=15.0 min (n=15); 0h 15m
+ - Kogola East / Male: Mean=15.0 min (n=16); 0h 15m
+ - Kokech / Female: Mean=48.3 min (n=27); 0h 48m
+ - Kokech / Male: Mean=42.8 min (n=27); 0h 43m

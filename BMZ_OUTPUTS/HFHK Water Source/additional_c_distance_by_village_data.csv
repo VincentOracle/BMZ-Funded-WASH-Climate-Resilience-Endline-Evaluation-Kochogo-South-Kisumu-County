@@ -1,0 +1,15 @@
+village,distance_category,n,pct
+Borda,500m-1km,6,26.1
+Borda,<500m,17,73.9
+Kabong'o,500m-1km,34,40.5
+Kabong'o,<500m,39,46.4
+Kabong'o,>1km,11,13.1
+Kagola West,500m-1km,18,29
+Kagola West,<500m,44,71
+Kaswa,500m-1km,6,23.1
+Kaswa,<500m,20,76.9
+Kogola East,500m-1km,13,41.9
+Kogola East,<500m,18,58.1
+Kokech,500m-1km,24,44.4
+Kokech,<500m,27,50
+Kokech,>1km,3,5.6

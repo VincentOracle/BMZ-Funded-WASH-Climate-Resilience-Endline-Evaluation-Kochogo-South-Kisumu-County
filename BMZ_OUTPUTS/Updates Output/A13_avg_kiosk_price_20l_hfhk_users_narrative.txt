@@ -1,0 +1,2 @@
+A13: Average HFHK kiosk price per 20L (among HFHK users who pay)
+ - Mean: 4.44; Median: 2; N: 131

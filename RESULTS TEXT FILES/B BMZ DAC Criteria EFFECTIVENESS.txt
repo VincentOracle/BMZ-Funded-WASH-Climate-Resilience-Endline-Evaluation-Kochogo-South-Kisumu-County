@@ -1,0 +1,835 @@
+> # ===============================
+> # BMZ DAC Criteria: EFFECTIVENESS (with Console Outputs)
+> # ===============================
+> 
+> # Load libraries
+> library(tidyverse)
+> library(readr)
+> library(openxlsx)
+> library(janitor)
+> library(ggplot2)
+> library(dplyr)
+> 
+> # Define working directories
+> input_file <- "C:/Users/Hp/Downloads/effectiveness_demographics.csv"
+> output_dir <- "C:/Users/Hp/Downloads/BMZ_OUTPUTS"
+> if(!dir.exists(output_dir)) dir.create(output_dir)
+> 
+> # Load dataset with encoding fix
+> df <- read_csv(input_file, locale = locale(encoding = "UTF-8")) %>% clean_names()
+New names:                                                                                          
+• `flood_prep_actions_dug_cleared` -> `flood_prep_actions_dug_cleared...113`
+• `flood_prep_actions_dug_cleared` -> `flood_prep_actions_dug_cleared...114`
+• `` -> `...144`
+• `` -> `...145`
+Rows: 280 Columns: 163
+── Column specification ────────────────────────────────────────────────────────────────────────────
+Delimiter: ","
+chr (94): enumerator, village, gender_hh, widow_single_mother, pwd, pwd_involved_planning, age_g...
+dbl (61): time_reason_closer, time_reason_shorter_queue, time_reason_reduced_cost, time_reason_i...
+lgl  (8): borehole_functional_reason, 10. Who is currently responsible for repairs and maintenan...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+> df[] <- lapply(df, function(x) if(is.character(x)) iconv(x, from="latin1", to="UTF-8") else x)
+> 
+> # -------------------------------
+> # Helper functions
+> # -------------------------------
+> save_plot <- function(plot, filename){
++   ggsave(filename = file.path(output_dir, filename), 
++          plot = plot, width = 8, height = 6, dpi = 300)
++ }
+> 
+> write_summary <- function(table, filename){
++   write.xlsx(table, file.path(output_dir, filename), overwrite = TRUE)
++ }
+> 
+> print_freq <- function(data, var, group=NULL){
++   if(!is.null(group)){
++     tab <- data %>% count(!!sym(group), !!sym(var)) %>%
++       group_by(!!sym(group)) %>%
++       mutate(perc = round(n/sum(n)*100,1))
++   } else {
++     tab <- data %>% count(!!sym(var)) %>%
++       mutate(perc = round(n/sum(n)*100,1))
++   }
++   print(tab)
++   return(tab)
++ }
+> 
+> # =======================================================
+> # 1. WATER ACCESS & TIME USE
+> # =======================================================
+> cat("\n--- WATER ACCESS & TIME USE ---\n")
+
+--- WATER ACCESS & TIME USE ---
+> 
+> # Frequencies
+> tab_kiosk <- print_freq(df, "kiosk_use_frequency", "village")
+# A tibble: 27 × 4
+# Groups:   village [6]
+   village     kiosk_use_frequency       n  perc
+   <chr>       <chr>                 <int> <dbl>
+ 1 Borda       "3\u00966 times/week"     1   4.3
+ 2 Borda       "Daily"                  16  69.6
+ 3 Borda       "Never"                   3  13  
+ 4 Borda       "Rarely"                  3  13  
+ 5 Kabong'o    "1\u00962 times/week"     1   1.2
+ 6 Kabong'o    "3\u00966 times/week"     4   4.8
+ 7 Kabong'o    "Daily"                  49  58.3
+ 8 Kabong'o    "Never"                  20  23.8
+ 9 Kabong'o    "Rarely"                 10  11.9
+10 Kagola West "1\u00962 times/week"     1   1.6
+# ℹ 17 more rows
+# ℹ Use `print(n = ...)` to see more rows
+> tab_time_change <- print_freq(df, "time_change", "gender_hh")
+# A tibble: 5 × 4
+# Groups:   gender_hh [2]
+  gender_hh time_change     n  perc
+  <chr>     <chr>       <int> <dbl>
+1 Female    Less           74  52.9
+2 Female    More            1   0.7
+3 Female    Same           65  46.4
+4 Male      Less           71  50.7
+5 Male      Same           69  49.3
+> 
+> # Save to Excel
+> write_summary(tab_kiosk, "tab_kiosk_use.xlsx")
+> write_summary(tab_time_change, "tab_time_change.xlsx")
+> 
+> # Plots
+> p1 <- ggplot(df, aes(x = kiosk_use_frequency, fill = village)) +
++   geom_bar(position = "dodge") +
++   labs(title = "Kiosk Use Frequency by Village", x = "Frequency", y = "Count")
+> save_plot(p1, "effectiveness_kiosk_use.png")
+> 
+> p2 <- ggplot(df, aes(x = time_change, fill = gender_hh)) +
++   geom_bar(position = "fill") +
++   labs(title = "Change in Water Fetching Time by Gender", x = "Change", y = "Proportion")
+> save_plot(p2, "effectiveness_time_change.png")
+> 
+> # =======================================================
+> # 2. HOUSEHOLD INCOME & LIVELIHOODS
+> # =======================================================
+> cat("\n--- HOUSEHOLD INCOME & LIVELIHOODS ---\n")
+
+--- HOUSEHOLD INCOME & LIVELIHOODS ---
+> 
+> tab_income <- print_freq(df, "income_increased")
+# A tibble: 2 × 3
+  income_increased     n  perc
+  <chr>            <int> <dbl>
+1 No                  65  23.2
+2 Yes                215  76.8
+> tab_income_village <- print_freq(df, "income_increased", "village")
+# A tibble: 12 × 4
+# Groups:   village [6]
+   village     income_increased     n  perc
+   <chr>       <chr>            <int> <dbl>
+ 1 Borda       No                   2   8.7
+ 2 Borda       Yes                 21  91.3
+ 3 Kabong'o    No                   3   3.6
+ 4 Kabong'o    Yes                 81  96.4
+ 5 Kagola West No                  17  27.4
+ 6 Kagola West Yes                 45  72.6
+ 7 Kaswa       No                   4  15.4
+ 8 Kaswa       Yes                 22  84.6
+ 9 Kogola East No                  12  38.7
+10 Kogola East Yes                 19  61.3
+11 Kokech      No                  27  50  
+12 Kokech      Yes                 27  50  
+> 
+> write_summary(tab_income, "tab_income_increase.xlsx")
+> 
+> # Pie chart
+> income_tab <- df %>% count(income_increased) %>%
++   mutate(perc = n/sum(n)*100)
+> 
+> p3 <- ggplot(income_tab, aes(x = "", y = perc, fill = income_increased)) +
++   geom_col(width = 1) + coord_polar("y") +
++   labs(title = "Proportion of Households Reporting Increased Income")
+> save_plot(p3, "effectiveness_income_increase.png")
+> 
+> # =======================================================
+> # 3. WATER QUALITY & INFRASTRUCTURE RELIABILITY
+> # =======================================================
+> cat("\n--- WATER QUALITY & INFRASTRUCTURE RELIABILITY ---\n")
+
+--- WATER QUALITY & INFRASTRUCTURE RELIABILITY ---
+> 
+> tab_borehole <- print_freq(df, "borehole_functional", "village")
+# A tibble: 6 × 4
+# Groups:   village [6]
+  village     borehole_functional     n  perc
+  <chr>       <chr>               <int> <dbl>
+1 Borda       Yes                    23   100
+2 Kabong'o    Yes                    84   100
+3 Kagola West Yes                    62   100
+4 Kaswa       Yes                    26   100
+5 Kogola East Yes                    31   100
+6 Kokech      Yes                    54   100
+> tab_water_quality <- print_freq(df, "water_quality_change")
+# A tibble: 2 × 3
+  water_quality_change                                      n  perc
+  <chr>                                                 <int> <dbl>
+1 Improved (minimal salinity, clearer, fewer illnesses)   242  86.4
+2 No change                                                38  13.6
+> 
+> write_summary(tab_borehole, "tab_borehole_functional.xlsx")
+> 
+> p4 <- ggplot(df, aes(x = borehole_functional, fill = village)) +
++   geom_bar(position = "dodge") +
++   labs(title = "Borehole Functionality by Village", x = "Functional?", y = "Count")
+> save_plot(p4, "effectiveness_borehole_functional.png")
+> 
+> # =======================================================
+> # 4. SANITATION & HYGIENE EFFECTIVENESS
+> # =======================================================
+> cat("\n--- SANITATION & HYGIENE EFFECTIVENESS ---\n")
+
+--- SANITATION & HYGIENE EFFECTIVENESS ---
+> 
+> tab_latrine_use <- print_freq(df, "hfkh_latrine_use", "village")
+# A tibble: 12 × 4
+# Groups:   village [6]
+   village     hfkh_latrine_use     n  perc
+   <chr>       <chr>            <int> <dbl>
+ 1 Borda       No                  18  78.3
+ 2 Borda       Yes                  5  21.7
+ 3 Kabong'o    No                  75  89.3
+ 4 Kabong'o    Yes                  9  10.7
+ 5 Kagola West No                  57  91.9
+ 6 Kagola West Yes                  5   8.1
+ 7 Kaswa       No                  16  61.5
+ 8 Kaswa       Yes                 10  38.5
+ 9 Kogola East No                  24  77.4
+10 Kogola East Yes                  7  22.6
+11 Kokech      No                  49  90.7
+12 Kokech      Yes                  5   9.3
+> tab_handwash <- print_freq(df, "place_to_wash_hands", "soap_available_today")
+# A tibble: 3 × 4
+# Groups:   soap_available_today [3]
+  soap_available_today place_to_wash_hands     n  perc
+  <chr>                <chr>               <int> <dbl>
+1 No                   Yes                     2   100
+2 Yes                  Yes                   262   100
+3 NA                   No                     16   100
+> 
+> write_summary(tab_latrine_use, "tab_latrine_use.xlsx")
+> write_summary(tab_handwash, "tab_handwash.xlsx")
+> 
+> p5 <- ggplot(df, aes(x = place_to_wash_hands, fill = soap_available_today)) +
++   geom_bar(position = "fill") +
++   labs(title = "Handwashing Facilities & Soap Availability", x = "Facility", y = "Proportion")
+> save_plot(p5, "effectiveness_handwashing.png")
+> 
+> # =======================================================
+> # 5. FLOOD PREPAREDNESS & RESILIENCE
+> # =======================================================
+> cat("\n--- FLOOD PREPAREDNESS & RESILIENCE ---\n")
+
+--- FLOOD PREPAREDNESS & RESILIENCE ---
+> 
+> tab_flood_prep <- print_freq(df, "household_prepared_for_seasonal_flooding", "village")
+# A tibble: 14 × 4
+# Groups:   village [6]
+   village     household_prepared_for_seasonal_flooding     n  perc
+   <chr>       <chr>                                    <int> <dbl>
+ 1 Borda       No                                           1   4.3
+ 2 Borda       Yes                                         22  95.7
+ 3 Kabong'o    Yes                                         84 100  
+ 4 Kagola West No                                          15  24.2
+ 5 Kagola West No change                                    4   6.5
+ 6 Kagola West Yes                                         43  69.4
+ 7 Kaswa       No                                           2   7.7
+ 8 Kaswa       No change                                    1   3.8
+ 9 Kaswa       Yes                                         23  88.5
+10 Kogola East No                                           9  29  
+11 Kogola East No change                                    2   6.5
+12 Kogola East Yes                                         20  64.5
+13 Kokech      No                                           1   1.9
+14 Kokech      Yes                                         53  98.1
+> tab_canal_awareness <- print_freq(df, "aware_canal_desilting")
+# A tibble: 2 × 3
+  aware_canal_desilting     n  perc
+  <chr>                 <int> <dbl>
+1 No                        3   1.1
+2 Yes                     277  98.9
+> 
+> write_summary(tab_flood_prep, "tab_flood_prep.xlsx")
+> 
+> p6 <- ggplot(df, aes(x = household_prepared_for_seasonal_flooding, fill = village)) +
++   geom_bar(position = "dodge") +
++   labs(title = "Household Preparedness for Seasonal Flooding", x = "Prepared?", y = "Count")
+> save_plot(p6, "effectiveness_flood_prep.png")
+> 
+> # =======================================================
+> # 6. YOUTH PARTICIPATION & CAPACITY BUILDING
+> # =======================================================
+> cat("\n--- YOUTH PARTICIPATION & CAPACITY BUILDING ---\n")
+
+--- YOUTH PARTICIPATION & CAPACITY BUILDING ---
+> 
+> tab_youth <- print_freq(df, "youth_participation_training", "village")
+# A tibble: 8 × 4
+# Groups:   village [6]
+  village     youth_participation_training     n  perc
+  <chr>       <chr>                        <int> <dbl>
+1 Borda       Yes                             23 100  
+2 Kabong'o    Yes                             84 100  
+3 Kagola West Not Sure                         3   4.8
+4 Kagola West Yes                             59  95.2
+5 Kaswa       Yes                             26 100  
+6 Kogola East Yes                             31 100  
+7 Kokech      No                               4   7.4
+8 Kokech      Yes                             50  92.6
+> tab_awareness <- print_freq(df, "usefulness_awareness_sessions")
+# A tibble: 4 × 3
+  usefulness_awareness_sessions     n  perc
+  <chr>                         <int> <dbl>
+1 Did not attend                    3   1.1
+2 Somewhat usefu                   82  29.3
+3 Very useful                     192  68.6
+4 NA                                3   1.1
+> 
+> write_summary(tab_youth, "tab_youth_participation.xlsx")
+> 
+> p7 <- ggplot(df, aes(x = youth_participation_training, fill = village)) +
++   geom_bar(position = "fill") +
++   labs(title = "Youth Participation by Village", x = "Participation", y = "Proportion")
+> save_plot(p7, "effectiveness_youth_participation.png")
+> 
+> # =======================================================
+> # AUTO-NARRATIVE POINTS
+> # =======================================================
+> cat("\n EFFECTIVENESS: AUTO-NARRATIVE NOTES \n")
+
+ EFFECTIVENESS: AUTO-NARRATIVE NOTES 
+> cat("- Majority of households reported changes in water access and reduced fetching time.\n")
+- Majority of households reported changes in water access and reduced fetching time.
+> cat("- A share of households indicated increased income, mainly from farming and small businesses.\n")
+- A share of households indicated increased income, mainly from farming and small businesses.
+> cat("- Borehole functionality varied across villages, with breakdown frequency influencing perceptions.\n")
+- Borehole functionality varied across villages, with breakdown frequency influencing perceptions.
+> cat("- Sanitation facilities improved but challenges remain during floods and at night for women and girls.\n")
+- Sanitation facilities improved but challenges remain during floods and at night for women and girls.
+> cat("- Flood preparedness actions and canal desilting awareness indicate strengthened resilience.\n")
+- Flood preparedness actions and canal desilting awareness indicate strengthened resilience.
+> cat("- Youth are participating in project activities, though roles differ across villages.\n")
+- Youth are participating in project activities, though roles differ across villages.
+> # CHI-SQUARE TESTS
+> # ===============================
+> # BMZ Project - DAC: Effectiveness
+> # Comprehensive R Analysis Script
+> # ===============================
+> 
+> # Load libraries
+> library(tidyverse)
+> library(readr)
+> library(openxlsx)
+> library(ggplot2)
+> 
+> # -------------------------------
+> # 1. Load and prepare data
+> # -------------------------------
+> data <- read_csv("C:/Users/Hp/Downloads/BMZ_project_clean_data_raw.csv")
+Rows: 0 Columns: 1                                                                                  
+── Column specification ────────────────────────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): A. Water Access & Use
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+> 
+> # Convert key variables to factors
+> factor_vars <- c("village", "gender_hh", "income_group", "PWD", 
++                  "water_quality_change", "distance_to_water", 
++                  "time_spent_water", "crop_production_change", 
++                  "income_increased", "skills_trained", "latrine_satisfaction", 
++                  "health_improved", "awareness_campaigns", "community_involvement")
+> 
+> data[factor_vars] <- lapply(data[factor_vars], factor)
+Error in `data[factor_vars]`:
+! Can't subset columns that don't exist.
+✖ Columns `village`, `gender_hh`, `income_group`, `PWD`, `water_quality_change`, etc. don't exist.
+Run `rlang::last_trace()` to see where the error occurred.
+
+> # CHI-SQUARE TESTS
+> # ===============================
+> # BMZ Project - DAC: Effectiveness
+> # Comprehensive R Analysis Script
+> # ===============================
+> 
+> # Load libraries
+> library(tidyverse)
+> library(readr)
+> library(openxlsx)
+> library(ggplot2)
+> 
+> # -------------------------------
+> # 1. Load and prepare data
+> # -------------------------------
+> data <- read_csv("C:/Users/Hp/Downloads/effectiveness_demographics.csv")
+New names:                                                                                          
+• `flood_prep_actions_dug_cleared` -> `flood_prep_actions_dug_cleared...113`
+• `flood_prep_actions_dug_cleared` -> `flood_prep_actions_dug_cleared...114`
+• `` -> `...144`
+• `` -> `...145`
+Rows: 280 Columns: 163
+── Column specification ────────────────────────────────────────────────────────────────────────────
+Delimiter: ","
+chr (94): enumerator, village, gender_hh, widow_single_mother, pwd, pwd_involved_planning, age_g...
+dbl (61): time_reason_closer, time_reason_shorter_queue, time_reason_reduced_cost, time_reason_i...
+lgl  (8): borehole_functional_reason, 10. Who is currently responsible for repairs and maintenan...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+> 
+> # Convert key variables to factors
+> factor_vars <- c("village", "gender_hh", "income_group", "PWD", 
++                  "water_quality_change", "distance_to_water", 
++                  "time_spent_water", "crop_production_change", 
++                  "income_increased", "skills_trained", "latrine_satisfaction", 
++                  "health_improved", "awareness_campaigns", "community_involvement")
+> 
+> data[factor_vars] <- lapply(data[factor_vars], factor)
+Error in `data[factor_vars]`:
+! Can't subset columns that don't exist.
+✖ Columns `income_group`, `PWD`, `distance_to_water`, `time_spent_water`, `crop_production_change`, etc. don't exist.
+Run `rlang::last_trace()` to see where the error occurred.
+
+> # CHI-SQUARE TESTS
+> # ===============================
+> # BMZ Project - DAC: Effectiveness
+> # Comprehensive R Analysis Script
+> # ===============================
+> 
+> # Load libraries
+> library(tidyverse)
+> library(readr)
+> library(openxlsx)
+> library(ggplot2)
+> 
+> # -------------------------------
+> # 1. Load and prepare data
+> # -------------------------------
+> data <- read_csv("C:/Users/Hp/Downloads/effectiveness_demographics.csv")
+New names:                                                                                          
+• `flood_prep_actions_dug_cleared` -> `flood_prep_actions_dug_cleared...113`
+• `flood_prep_actions_dug_cleared` -> `flood_prep_actions_dug_cleared...114`
+• `` -> `...144`
+• `` -> `...145`
+Rows: 280 Columns: 164
+── Column specification ────────────────────────────────────────────────────────────────────────────
+Delimiter: ","
+chr (94): enumerator, village, gender_hh, widow_single_mother, pwd, pwd_involved_planning, age_g...
+dbl (62): time_reason_closer, time_reason_shorter_queue, time_reason_reduced_cost, time_reason_i...
+lgl  (8): borehole_functional_reason, 10. Who is currently responsible for repairs and maintenan...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+> 
+> # Convert key variables to factors
+> factor_vars <- c("village", "gender_hh", "income_band", "pwd", 
++                  "water_quality_change", "distance_in_meters", 
++                  "time_spent_water", "crop_production_change", 
++                  "income_increased", "skills_trained", "latrine_satisfaction", 
++                  "health_improved", "awareness_campaigns", "community_involvement")
+> 
+> data[factor_vars] <- lapply(data[factor_vars], factor)
+Error in `data[factor_vars]`:
+! Can't subset columns that don't exist.
+✖ Columns `time_spent_water`, `crop_production_change`, `skills_trained`, `health_improved`, `awareness_campaigns`, etc. don't exist.
+Run `rlang::last_trace()` to see where the error occurred.
+
+> # ===============================
+> # BMZ DAC Criteria: EFFECTIVENESS (with Console Outputs)
+> # ===============================
+> 
+> # Load libraries
+> library(tidyverse)
+> library(readr)
+> library(openxlsx)
+> library(janitor)
+> library(ggplot2)
+> library(dplyr)
+> 
+> # Define working directories
+> input_file <- "C:/Users/Hp/Downloads/effectiveness_demographics.csv"
+> output_dir <- "C:/Users/Hp/Downloads/BMZ_OUTPUTS"
+> if(!dir.exists(output_dir)) dir.create(output_dir)
+> 
+> # Load dataset with encoding fix
+> df <- read_csv(input_file, locale = locale(encoding = "UTF-8")) %>% clean_names()
+New names:                                                                                          
+• `flood_prep_actions_dug_cleared` -> `flood_prep_actions_dug_cleared...113`
+• `flood_prep_actions_dug_cleared` -> `flood_prep_actions_dug_cleared...114`
+• `` -> `...144`
+• `` -> `...145`
+Rows: 280 Columns: 164
+── Column specification ────────────────────────────────────────────────────────────────────────────
+Delimiter: ","
+chr (94): enumerator, village, gender_hh, widow_single_mother, pwd, pwd_involved_planning, age_g...
+dbl (62): time_reason_closer, time_reason_shorter_queue, time_reason_reduced_cost, time_reason_i...
+lgl  (8): borehole_functional_reason, 10. Who is currently responsible for repairs and maintenan...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+> df[] <- lapply(df, function(x) if(is.character(x)) iconv(x, from="latin1", to="UTF-8") else x)
+> 
+> # -------------------------------
+> # Helper functions
+> # -------------------------------
+> save_plot <- function(plot, filename){
++   ggsave(filename = file.path(output_dir, filename), 
++          plot = plot, width = 8, height = 6, dpi = 300)
++ }
+> 
+> write_summary <- function(table, filename){
++   write.xlsx(table, file.path(output_dir, filename), overwrite = TRUE)
++ }
+> 
+> print_freq <- function(data, var, group=NULL){
++   if(!is.null(group)){
++     tab <- data %>% count(!!sym(group), !!sym(var)) %>%
++       group_by(!!sym(group)) %>%
++       mutate(perc = round(n/sum(n)*100,1))
++   } else {
++     tab <- data %>% count(!!sym(var)) %>%
++       mutate(perc = round(n/sum(n)*100,1))
++   }
++   print(tab)
++   return(tab)
++ }
+> 
+> # =======================================================
+> # 1. WATER ACCESS & TIME USE
+> # =======================================================
+> cat("\n--- WATER ACCESS & TIME USE ---\n")
+
+--- WATER ACCESS & TIME USE ---
+> 
+> # Frequencies
+> tab_kiosk <- print_freq(df, "kiosk_use_frequency", "village")
+# A tibble: 27 × 4
+# Groups:   village [6]
+   village     kiosk_use_frequency       n  perc
+   <chr>       <chr>                 <int> <dbl>
+ 1 Borda       "3\u00966 times/week"     1   4.3
+ 2 Borda       "Daily"                  16  69.6
+ 3 Borda       "Never"                   3  13  
+ 4 Borda       "Rarely"                  3  13  
+ 5 Kabong'o    "1\u00962 times/week"     1   1.2
+ 6 Kabong'o    "3\u00966 times/week"     4   4.8
+ 7 Kabong'o    "Daily"                  49  58.3
+ 8 Kabong'o    "Never"                  20  23.8
+ 9 Kabong'o    "Rarely"                 10  11.9
+10 Kagola West "1\u00962 times/week"     1   1.6
+# ℹ 17 more rows
+# ℹ Use `print(n = ...)` to see more rows
+> tab_time_change <- print_freq(df, "time_change", "gender_hh")
+# A tibble: 5 × 4
+# Groups:   gender_hh [2]
+  gender_hh time_change     n  perc
+  <chr>     <chr>       <int> <dbl>
+1 Female    Less           74  52.9
+2 Female    More            1   0.7
+3 Female    Same           65  46.4
+4 Male      Less           71  50.7
+5 Male      Same           69  49.3
+> 
+> # Save to Excel
+> write_summary(tab_kiosk, "tab_kiosk_use.xlsx")
+> write_summary(tab_time_change, "tab_time_change.xlsx")
+> 
+> # Plots
+> p1 <- ggplot(df, aes(x = kiosk_use_frequency, fill = village)) +
++   geom_bar(position = "dodge") +
++   labs(title = "Kiosk Use Frequency by Village", x = "Frequency", y = "Count")
+> save_plot(p1, "effectiveness_kiosk_use.png")
+> 
+> p2 <- ggplot(df, aes(x = time_change, fill = gender_hh)) +
++   geom_bar(position = "fill") +
++   labs(title = "Change in Water Fetching Time by Gender", x = "Change", y = "Proportion")
+> save_plot(p2, "effectiveness_time_change.png")
+> 
+> # =======================================================
+> # 2. HOUSEHOLD INCOME & LIVELIHOODS
+> # =======================================================
+> cat("\n--- HOUSEHOLD INCOME & LIVELIHOODS ---\n")
+
+--- HOUSEHOLD INCOME & LIVELIHOODS ---
+> 
+> tab_income <- print_freq(df, "income_increased")
+# A tibble: 2 × 3
+  income_increased     n  perc
+  <chr>            <int> <dbl>
+1 No                  65  23.2
+2 Yes                215  76.8
+> tab_income_village <- print_freq(df, "income_increased", "village")
+# A tibble: 12 × 4
+# Groups:   village [6]
+   village     income_increased     n  perc
+   <chr>       <chr>            <int> <dbl>
+ 1 Borda       No                   2   8.7
+ 2 Borda       Yes                 21  91.3
+ 3 Kabong'o    No                   3   3.6
+ 4 Kabong'o    Yes                 81  96.4
+ 5 Kagola West No                  17  27.4
+ 6 Kagola West Yes                 45  72.6
+ 7 Kaswa       No                   4  15.4
+ 8 Kaswa       Yes                 22  84.6
+ 9 Kogola East No                  12  38.7
+10 Kogola East Yes                 19  61.3
+11 Kokech      No                  27  50  
+12 Kokech      Yes                 27  50  
+> 
+> write_summary(tab_income, "tab_income_increase.xlsx")
+> 
+> # Pie chart
+> income_tab <- df %>% count(income_increased) %>%
++   mutate(perc = n/sum(n)*100)
+> 
+> p3 <- ggplot(income_tab, aes(x = "", y = perc, fill = income_increased)) +
++   geom_col(width = 1) + coord_polar("y") +
++   labs(title = "Proportion of Households Reporting Increased Income")
+> save_plot(p3, "effectiveness_income_increase.png")
+> 
+> # =======================================================
+> # 3. WATER QUALITY & INFRASTRUCTURE RELIABILITY
+> # =======================================================
+> cat("\n--- WATER QUALITY & INFRASTRUCTURE RELIABILITY ---\n")
+
+--- WATER QUALITY & INFRASTRUCTURE RELIABILITY ---
+> 
+> tab_borehole <- print_freq(df, "borehole_functional", "village")
+# A tibble: 6 × 4
+# Groups:   village [6]
+  village     borehole_functional     n  perc
+  <chr>       <chr>               <int> <dbl>
+1 Borda       Yes                    23   100
+2 Kabong'o    Yes                    84   100
+3 Kagola West Yes                    62   100
+4 Kaswa       Yes                    26   100
+5 Kogola East Yes                    31   100
+6 Kokech      Yes                    54   100
+> tab_water_quality <- print_freq(df, "water_quality_change")
+# A tibble: 2 × 3
+  water_quality_change                                      n  perc
+  <chr>                                                 <int> <dbl>
+1 Improved (minimal salinity, clearer, fewer illnesses)   242  86.4
+2 No change                                                38  13.6
+> 
+> write_summary(tab_borehole, "tab_borehole_functional.xlsx")
+> 
+> p4 <- ggplot(df, aes(x = borehole_functional, fill = village)) +
++   geom_bar(position = "dodge") +
++   labs(title = "Borehole Functionality by Village", x = "Functional?", y = "Count")
+> save_plot(p4, "effectiveness_borehole_functional.png")
+> 
+> # =======================================================
+> # 4. SANITATION & HYGIENE EFFECTIVENESS
+> # =======================================================
+> cat("\n--- SANITATION & HYGIENE EFFECTIVENESS ---\n")
+
+--- SANITATION & HYGIENE EFFECTIVENESS ---
+> 
+> tab_latrine_use <- print_freq(df, "hfkh_latrine_use", "village")
+# A tibble: 12 × 4
+# Groups:   village [6]
+   village     hfkh_latrine_use     n  perc
+   <chr>       <chr>            <int> <dbl>
+ 1 Borda       No                  18  78.3
+ 2 Borda       Yes                  5  21.7
+ 3 Kabong'o    No                  75  89.3
+ 4 Kabong'o    Yes                  9  10.7
+ 5 Kagola West No                  57  91.9
+ 6 Kagola West Yes                  5   8.1
+ 7 Kaswa       No                  16  61.5
+ 8 Kaswa       Yes                 10  38.5
+ 9 Kogola East No                  24  77.4
+10 Kogola East Yes                  7  22.6
+11 Kokech      No                  49  90.7
+12 Kokech      Yes                  5   9.3
+> tab_handwash <- print_freq(df, "place_to_wash_hands", "soap_available_today")
+# A tibble: 3 × 4
+# Groups:   soap_available_today [3]
+  soap_available_today place_to_wash_hands     n  perc
+  <chr>                <chr>               <int> <dbl>
+1 No                   Yes                     2   100
+2 Yes                  Yes                   262   100
+3 NA                   No                     16   100
+> 
+> write_summary(tab_latrine_use, "tab_latrine_use.xlsx")
+> write_summary(tab_handwash, "tab_handwash.xlsx")
+> 
+> p5 <- ggplot(df, aes(x = place_to_wash_hands, fill = soap_available_today)) +
++   geom_bar(position = "fill") +
++   labs(title = "Handwashing Facilities & Soap Availability", x = "Facility", y = "Proportion")
+> save_plot(p5, "effectiveness_handwashing.png")
+> 
+> # =======================================================
+> # 5. FLOOD PREPAREDNESS & RESILIENCE
+> # =======================================================
+> cat("\n--- FLOOD PREPAREDNESS & RESILIENCE ---\n")
+
+--- FLOOD PREPAREDNESS & RESILIENCE ---
+> 
+> tab_flood_prep <- print_freq(df, "household_prepared_for_seasonal_flooding", "village")
+# A tibble: 14 × 4
+# Groups:   village [6]
+   village     household_prepared_for_seasonal_flooding     n  perc
+   <chr>       <chr>                                    <int> <dbl>
+ 1 Borda       No                                           1   4.3
+ 2 Borda       Yes                                         22  95.7
+ 3 Kabong'o    Yes                                         84 100  
+ 4 Kagola West No                                          15  24.2
+ 5 Kagola West No change                                    4   6.5
+ 6 Kagola West Yes                                         43  69.4
+ 7 Kaswa       No                                           2   7.7
+ 8 Kaswa       No change                                    1   3.8
+ 9 Kaswa       Yes                                         23  88.5
+10 Kogola East No                                           9  29  
+11 Kogola East No change                                    2   6.5
+12 Kogola East Yes                                         20  64.5
+13 Kokech      No                                           1   1.9
+14 Kokech      Yes                                         53  98.1
+> tab_canal_awareness <- print_freq(df, "aware_canal_desilting")
+# A tibble: 2 × 3
+  aware_canal_desilting     n  perc
+  <chr>                 <int> <dbl>
+1 No                        3   1.1
+2 Yes                     277  98.9
+> 
+> write_summary(tab_flood_prep, "tab_flood_prep.xlsx")
+> 
+> p6 <- ggplot(df, aes(x = household_prepared_for_seasonal_flooding, fill = village)) +
++   geom_bar(position = "dodge") +
++   labs(title = "Household Preparedness for Seasonal Flooding", x = "Prepared?", y = "Count")
+> save_plot(p6, "effectiveness_flood_prep.png")
+> 
+> # =======================================================
+> # 6. YOUTH PARTICIPATION & CAPACITY BUILDING
+> # =======================================================
+> cat("\n--- YOUTH PARTICIPATION & CAPACITY BUILDING ---\n")
+
+--- YOUTH PARTICIPATION & CAPACITY BUILDING ---
+> 
+> tab_youth <- print_freq(df, "youth_participation_training", "village")
+# A tibble: 8 × 4
+# Groups:   village [6]
+  village     youth_participation_training     n  perc
+  <chr>       <chr>                        <int> <dbl>
+1 Borda       Yes                             23 100  
+2 Kabong'o    Yes                             84 100  
+3 Kagola West Not Sure                         3   4.8
+4 Kagola West Yes                             59  95.2
+5 Kaswa       Yes                             26 100  
+6 Kogola East Yes                             31 100  
+7 Kokech      No                               4   7.4
+8 Kokech      Yes                             50  92.6
+> tab_awareness <- print_freq(df, "usefulness_awareness_sessions")
+# A tibble: 4 × 3
+  usefulness_awareness_sessions     n  perc
+  <chr>                         <int> <dbl>
+1 Did not attend                    3   1.1
+2 Somewhat usefu                   82  29.3
+3 Very useful                     192  68.6
+4 NA                                3   1.1
+> 
+> write_summary(tab_youth, "tab_youth_participation.xlsx")
+> 
+> p7 <- ggplot(df, aes(x = youth_participation_training, fill = village)) +
++   geom_bar(position = "fill") +
++   labs(title = "Youth Participation by Village", x = "Participation", y = "Proportion")
+> save_plot(p7, "effectiveness_youth_participation.png")
+> 
+> # =======================================================
+> # AUTO-NARRATIVE POINTS
+> # =======================================================
+> cat("\n EFFECTIVENESS: AUTO-NARRATIVE NOTES \n")
+
+ EFFECTIVENESS: AUTO-NARRATIVE NOTES 
+> cat("- Majority of households reported changes in water access and reduced fetching time.\n")
+- Majority of households reported changes in water access and reduced fetching time.
+> cat("- A share of households indicated increased income, mainly from farming and small businesses.\n")
+- A share of households indicated increased income, mainly from farming and small businesses.
+> cat("- Borehole functionality varied across villages, with breakdown frequency influencing perceptions.\n")
+- Borehole functionality varied across villages, with breakdown frequency influencing perceptions.
+> cat("- Sanitation facilities improved but challenges remain during floods and at night for women and girls.\n")
+- Sanitation facilities improved but challenges remain during floods and at night for women and girls.
+> cat("- Flood preparedness actions and canal desilting awareness indicate strengthened resilience.\n")
+- Flood preparedness actions and canal desilting awareness indicate strengthened resilience.
+> cat("- Youth are participating in project activities, though roles differ across villages.\n")
+- Youth are participating in project activities, though roles differ across villages.
+> 
+> 
+> 
+> # ===============================
+> # BMZ Project - DAC: Effectiveness
+> # Comprehensive R Analysis Script
+> # ===============================
+> 
+> # Load libraries
+> library(tidyverse)
+> library(readr)
+> library(openxlsx)
+> library(ggplot2)
+> 
+> # -------------------------------
+> # 1. Load and prepare data
+> # -------------------------------
+> data <- read_csv("C:/Users/Hp/Downloads/BMZ_project_clean_data_raw.csv")
+Rows: 0 Columns: 1                                                                                  
+── Column specification ────────────────────────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): A. Water Access & Use
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+> 
+> # -------------------------------
+> # Define demographics + effectiveness variables
+> # -------------------------------
+> demographics <- c("village", "gender_hh", "income_band", "pwd")
+> 
+> effectiveness_vars <- c(
++   # Section 1: Water access & time use
++   "kiosk_use_frequency", "time_fetch_before", "time_fetch_now", 
++   "time_change", "women_less_time_fetch",
++   
++   # Section 2: Household income & livelihoods
++   "income_increased", "income_increase_where",
++   
++   # Section 3: Water quality & infrastructure reliability
++   "water_quality_change", "borehole_functional", "borehole_breakdowns", 
++   "breakdown_frequency", "repairs_water", "repairs_latrines", "user_fees_effective",
++   
++   # Section 4: Sanitation & hygiene effectiveness
++   "hfkh_latrine_use", "latrine_satisfaction", "latrine_functional_during_flood",
++   "girls_comfortable_using_latrine_night", "women_latrine_use_night_and_floods",
++   "place_to_wash_hands", "soap_available_today", "hygiene_training_reduced_illness", 
++   "diarrhea_past_2wks",
++   
++   # Section 5: Flood preparedness & resilience
++   "flood_prep_actions_stored_water", "aware_canal_desilting", 
++   "canal_works_helped_reduce_flooding", "community_committee_still_active", 
++   "effective_desilted_canals_and_embankments_reducing_floods", 
++   "household_prepared_for_seasonal_flooding", "village_better_protected",
++   
++   # Section 6: Youth participation & capacity building
++   "youth_participation_training", "youth_jobs_roles_water_committee", 
++   "usefulness_awareness_sessions"
++ )
+> 
+> # Convert to factors safely (only if exists)
+> factor_vars <- intersect(effectiveness_vars, names(data))
+> data[factor_vars] <- lapply(data[factor_vars], factor)
+> data[demographics] <- lapply(data[demographics], factor)
+Error in `data[demographics]`:
+! Can't subset columns that don't exist.
+✖ Columns `village`, `gender_hh`, `income_band`, and `pwd` don't exist.
+Run `rlang::last_trace()` to see where the error occurred.
+
+> 

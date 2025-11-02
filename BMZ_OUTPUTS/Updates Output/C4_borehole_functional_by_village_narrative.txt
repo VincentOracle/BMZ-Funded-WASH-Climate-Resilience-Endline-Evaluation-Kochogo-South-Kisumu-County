@@ -1,0 +1,7 @@
+C4 (4.31): Borehole functional by village
+ - Borda / Yes: 23 (100%)
+ - Kabong'o / Yes: 84 (100%)
+ - Kagola West / Yes: 62 (100%)
+ - Kaswa / Yes: 26 (100%)
+ - Kogola East / Yes: 31 (100%)
+ - Kokech / Yes: 54 (100%)

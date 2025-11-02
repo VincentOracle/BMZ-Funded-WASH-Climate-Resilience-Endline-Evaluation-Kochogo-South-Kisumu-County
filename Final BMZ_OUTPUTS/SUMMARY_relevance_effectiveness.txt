@@ -1,0 +1,8 @@
+A1: Awareness of HFHK project = 100% 'Yes'.
+A7/A8: Year-round water availability = 80% 'Yes'.
+A9: Paying for water (overall) = 50.7% 'Yes'.
+A10/A11: Paying among HFHK kiosk users = 99.2% 'Yes'.
+A14: Cost affordability most common response: 'Yes'.
+A16: Home/farm affected by flood (past year) = 67.1% 'Yes'.
+C-4.25: Average time to fetch water now (overall mean across groups): 20.6 minutes.
+A5/A6: Average distance to kiosk: 479.8 meters.

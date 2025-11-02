@@ -1,0 +1,13 @@
+B2 (Q3.2): Handwash knowledge - % households that know >=3 critical times (by village & gender):
+ - Borda / Female:  9/12 ( 75.0%)
+ - Borda / Male: 10/11 ( 90.9%)
+ - Kabong'o / Female: 39/42 ( 92.9%)
+ - Kabong'o / Male: 39/42 ( 92.9%)
+ - Kagola West / Female: 26/31 ( 83.9%)
+ - Kagola West / Male: 26/31 ( 83.9%)
+ - Kaswa / Female:  5/13 ( 38.5%)
+ - Kaswa / Male:  6/13 ( 46.2%)
+ - Kogola East / Female: 15/15 (100.0%)
+ - Kogola East / Male: 15/16 ( 93.8%)
+ - Kokech / Female: 27/27 (100.0%)
+ - Kokech / Male: 27/27 (100.0%)

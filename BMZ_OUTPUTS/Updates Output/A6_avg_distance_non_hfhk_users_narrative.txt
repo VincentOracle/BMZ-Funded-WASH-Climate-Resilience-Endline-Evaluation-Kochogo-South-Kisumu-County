@@ -1,0 +1,2 @@
+A6: Average distance to HFHK kiosk among non-HFHK primary source users
+ - Mean: 586.2 m; Median: 530.7 m; N (with distance): 148

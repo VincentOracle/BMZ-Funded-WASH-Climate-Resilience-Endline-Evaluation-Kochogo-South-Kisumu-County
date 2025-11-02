@@ -1,0 +1,3 @@
+C5 (4.32): Reported shortages/breakdowns (overall):
+ - No: 112 (40%)
+ - Yes: 168 (60%)

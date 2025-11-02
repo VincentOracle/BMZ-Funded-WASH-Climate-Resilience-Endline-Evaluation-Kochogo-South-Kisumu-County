@@ -1,0 +1,19 @@
+village,gender_hh,water_cost_affordable,n,pct
+Borda,Female,No,2,25
+Borda,Female,Yes,6,75
+Borda,Male,No,1,10
+Borda,Male,Yes,9,90
+Kabong'o,Female,Yes,26,100
+Kabong'o,Male,Yes,24,100
+Kagola West,Female,No,1,12.5
+Kagola West,Female,Yes,7,87.5
+Kagola West,Male,No,1,6.7
+Kagola West,Male,Yes,14,93.3
+Kaswa,Female,No,3,37.5
+Kaswa,Female,Yes,5,62.5
+Kaswa,Male,No,1,10
+Kaswa,Male,Yes,9,90
+Kogola East,Female,Yes,6,100
+Kogola East,Male,Yes,4,100
+Kokech,Female,Yes,13,100
+Kokech,Male,Yes,10,100

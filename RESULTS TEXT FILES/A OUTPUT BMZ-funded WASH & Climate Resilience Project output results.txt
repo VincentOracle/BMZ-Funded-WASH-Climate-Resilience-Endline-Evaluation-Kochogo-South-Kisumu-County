@@ -1,0 +1,779 @@
+DATAUPSKLL CONSULTING KENYA LIMITED
+Project Evaluation Questionnaire Data Analysis Matrix
+Project: BMZ-funded WASH & Climate Resilience Project output results
+Implementing Agency: Habitat for Humanity Kenya (HFHK)
+Location: Kochogo South, Kisumu County
+
+OUTPUT RESULTS
+
+A) Relevance 
+
+> # Set your CSV path here:
+> data_path <- "C:\Users\Hp\Downloads\relevance_demographics.csv"   # <--- CHANGE THIS to your actual file name
+Error: '\U' used without hex digits in character string (<input>:1:18)
+
+> dir.create("outputs", showWarnings = FALSE)
+> # BMZ WASH & Climate Resilience - RELEVANCE Analysis
+> # Data: Demographics + Relevance (280 obs)
+> # Author: DATAUPSKLL CONSULTING KENYA LTD
+> # ===========================
+> 
+> # ---- 0) Setup ----
+> # This line creates the 'packages' object.
+> packages <- c("tidyverse","janitor","skimr","gt","forcats","stringr")
+> 
+> # This line silently installs any missing packages.
+> invisible(lapply(packages, function(p) if (!requireNamespace(p, quietly=TRUE)) install.packages(p)))
+> 
+> # This line loads the packages into the current R session.
+> lapply(packages, library, character.only = TRUE)
+── Attaching core tidyverse packages ──────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.2     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.1.0     
+── Conflicts ────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package to force all conflicts to become errors
+
+Attaching package: ‘janitor’
+
+The following objects are masked from ‘package:stats’:
+
+    chisq.test, fisher.test
+[[1]]
+ [1] "lubridate" "forcats"   "stringr"   "dplyr"     "purrr"    
+ [6] "readr"     "tidyr"     "tibble"    "ggplot2"   "tidyverse"
+[11] "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+[16] "methods"   "base"     
+
+[[2]]
+ [1] "janitor"   "lubridate" "forcats"   "stringr"   "dplyr"    
+ [6] "purrr"     "readr"     "tidyr"     "tibble"    "ggplot2"  
+[11] "tidyverse" "stats"     "graphics"  "grDevices" "utils"    
+[16] "datasets"  "methods"   "base"     
+
+[[3]]
+ [1] "skimr"     "janitor"   "lubridate" "forcats"   "stringr"  
+ [6] "dplyr"     "purrr"     "readr"     "tidyr"     "tibble"   
+[11] "ggplot2"   "tidyverse" "stats"     "graphics"  "grDevices"
+[16] "utils"     "datasets"  "methods"   "base"     
+
+[[4]]
+ [1] "gt"        "skimr"     "janitor"   "lubridate" "forcats"  
+ [6] "stringr"   "dplyr"     "purrr"     "readr"     "tidyr"    
+[11] "tibble"    "ggplot2"   "tidyverse" "stats"     "graphics" 
+[16] "grDevices" "utils"     "datasets"  "methods"   "base"     
+
+[[5]]
+ [1] "gt"        "skimr"     "janitor"   "lubridate" "forcats"  
+ [6] "stringr"   "dplyr"     "purrr"     "readr"     "tidyr"    
+[11] "tibble"    "ggplot2"   "tidyverse" "stats"     "graphics" 
+[16] "grDevices" "utils"     "datasets"  "methods"   "base"     
+
+[[6]]
+ [1] "gt"        "skimr"     "janitor"   "lubridate" "forcats"  
+ [6] "stringr"   "dplyr"     "purrr"     "readr"     "tidyr"    
+[11] "tibble"    "ggplot2"   "tidyverse" "stats"     "graphics" 
+[16] "grDevices" "utils"     "datasets"  "methods"   "base"     
+
+> 
+> 
+> # Set your CSV path here:
+> data_path <- "C:/Users/Hp/Downloads/relevance_demographics.csv"   # <--- CHANGE THIS to your actual file name
+> dir.create("outputs", showWarnings = FALSE)
+> # ---- 1) Import & basic checks ----
+> df <- readr::read_csv(data_path, show_col_types = FALSE) %>% 
++   janitor::clean_names()
+New names:                                                              
+• `` -> `...48`
+> 
+> # quick structure & missing scan
+> skimr::skim(df)
+── Data Summary ────────────────────────
+                           Values
+Name                       df    
+Number of rows             280   
+Number of columns          61    
+_______________________          
+Column type frequency:           
+  character                41    
+  logical                  3     
+  numeric                  17    
+________________________         
+Group variables            None  
+
+── Variable type: character ────────────────────────────────────────────
+   skim_variable                n_missing complete_rate min max empty
+ 1 enumerator                           0       1         9  23     0
+ 2 village                              0       1         5  11     0
+ 3 gender_hh                            0       1         4   6     0
+ 4 widow_single_mother                140       0.5       2   3     0
+ 5 pwd                                  0       1         2   3     0
+ 6 pwd_involved_planning              254       0.0929    3  10     0
+ 7 age_group                            0       1        19  19     0
+ 8 livelihood                           0       1         5  17     0
+ 9 livelihood_other                   263       0.0607    4  74     0
+10 income_band                          0       1        10  16     0
+11 aware_hfhk                           0       1         3   3     0
+12 primary_water_source                 0       1        15  25     0
+13 primary_water_other                278       0.00714  22  33     0
+14 water_year_round                     0       1         2   3     0
+15 pay_for_water                        0       1         2   3     0
+16 water_cost_affordable              138       0.507     2   3     0
+17 pwd_ease_use                       254       0.0929    2  21     0
+18 pwd_barriers                       277       0.0107   16  27     0
+19 latrine_type                         0       1        84 120     0
+20 hfhk_latrine_satisfaction          243       0.132    14  14     0
+21 latrine_flood_function               0       1         2   3     0
+22 latrine_issue                       98       0.65      8 132     0
+23 latrine_safe_heavy_rain              0       1         2   3     0
+24 all_members_use_latrine              0       1         3   3     0
+25 handwashing_station                  0       1         2   3     0
+26 hws_components                      15       0.946    10  39     0
+27 handwash_other_specify             278       0.00714  13  19     0
+28 hygiene_practices_improved           0       1         2   3     0
+29 hygiene_improvement_desc             2       0.993     8 143     0
+30 flood_damage_decreased               0       1         2   8     0
+31 flood_decrease_desc                 88       0.686     9 121     0
+32 flood_prep_actions                   0       1         5  20     0
+33 flood_prep_other                   268       0.0429   12 116     0
+34 canal_desilt_helped                  0       1         2   8     0
+35 activities_still_useful              0       1         2  19     0
+36 useful_interventions                 4       0.986    28 175     0
+37 why_not_useful                     279       0.00357  19  19     0
+38 most_positive_intervention           0       1         5 153     0
+39 remaining_challenges                 0       1         4 145     0
+40 most_important_change                0       1        11 163     0
+41 life_different_if_no_project         0       1         2   8     0
+   n_unique whitespace
+ 1       11          0
+ 2        6          0
+ 3        2          0
+ 4        2          0
+ 5        2          0
+ 6        2          0
+ 7        3          0
+ 8        5          0
+ 9       13          0
+10        3          0
+11        1          0
+12        6          0
+13        2          0
+14        2          0
+15        2          0
+16        2          0
+17        3          0
+18        3          0
+19        3          0
+20        1          0
+21        2          0
+22      113          0
+23        2          0
+24        1          0
+25        2          0
+26        4          0
+27        2          0
+28        2          0
+29      221          0
+30        3          0
+31      138          0
+32        4          0
+33       11          0
+34        3          0
+35        3          0
+36       57          0
+37        1          0
+38      162          0
+39      232          0
+40      205          0
+41        3          0
+
+── Variable type: logical ──────────────────────────────────────────────
+  skim_variable       n_missing complete_rate mean count
+1 latrine_other             280             0  NaN ": " 
+2 who_not_use_latrine       280             0  NaN ": " 
+3 x48                       280             0  NaN ": " 
+
+── Variable type: numeric ──────────────────────────────────────────────
+   skim_variable                n_missing complete_rate    mean     sd
+ 1 pay_frequency_20l                  138         0.507 5.47    8.87  
+ 2 hws_has_soap_and_water              15         0.946 0.981   0.136 
+ 3 hws_has_ash_and_water               15         0.946 0.00377 0.0614
+ 4 hws_has_water                       15         0.946 0       0     
+ 5 hws_has_nothing                     15         0.946 0       0     
+ 6 handwash_after_toilet                0         1     0.871   0.335 
+ 7 handwash_before_eating               0         1     0.943   0.233 
+ 8 handwash_before_cooking              0         1     0.843   0.365 
+ 9 handwash_after_waste                 0         1     0.768   0.423 
+10 handwash_after_cleaning              0         1     0.736   0.442 
+11 handwash_other                       0         1     0.00714 0.0844
+12 useful_access_kiosks                 4         0.986 0.895   0.307 
+13 useful_latrines_sanitization         4         0.986 0.884   0.321 
+14 useful_training                      4         0.986 0.899   0.302 
+15 useful_flood_awareness               4         0.986 0.692   0.462 
+16 useful_committees                    4         0.986 0.366   0.483 
+17 useful_other                         4         0.986 0       0     
+   p0 p25 p50 p75 p100 hist 
+ 1  1   2   2   5   50 ▇▁▁▁▁
+ 2  0   1   1   1    1 ▁▁▁▁▇
+ 3  0   0   0   0    1 ▇▁▁▁▁
+ 4  0   0   0   0    0 ▁▁▇▁▁
+ 5  0   0   0   0    0 ▁▁▇▁▁
+ 6  0   1   1   1    1 ▁▁▁▁▇
+ 7  0   1   1   1    1 ▁▁▁▁▇
+ 8  0   1   1   1    1 ▂▁▁▁▇
+ 9  0   1   1   1    1 ▂▁▁▁▇
+10  0   0   1   1    1 ▃▁▁▁▇
+11  0   0   0   0    1 ▇▁▁▁▁
+12  0   1   1   1    1 ▁▁▁▁▇
+13  0   1   1   1    1 ▁▁▁▁▇
+14  0   1   1   1    1 ▁▁▁▁▇
+15  0   0   1   1    1 ▃▁▁▁▇
+16  0   0   0   1    1 ▇▁▁▁▅
+17  0   0   0   0    0 ▁▁▇▁▁
+> 
+> # ensure expected columns exist (will stop if any is missing)
+> expected_cols <- c(
++   # Demographics
++   "enumerator","village","gender_hh","widow_single_mother","pwd","pwd_involved_planning",
++   "age_group","livelihood","livelihood_other","income_band","aware_hfhk",
++   # Relevance
++   "primary_water_source","primary_water_other","water_year_round","pay_for_water",
++   "pay_frequency_20l","water_cost_affordable","pwd_ease_use","pwd_barriers",
++   "latrine_type","latrine_other","hfhk_latrine_satisfaction","latrine_flood_function",
++   "latrine_issue","latrine_safe_heavy_rain","all_members_use_latrine","who_not_use_latrine",
++   "handwashing_station","hws_components","hws_has_soap_and_water","hws_has_ash_and_water",
++   "hws_has_water","hws_has_nothing","handwash_after_toilet","handwash_before_eating",
++   "handwash_before_cooking","handwash_after_waste","handwash_after_cleaning",
++   "handwash_other","handwash_other_specify","hygiene_practices_improved",
++   "hygiene_improvement_desc","flood_damage_decreased","flood_decrease_desc",
++   "flood_prep_actions","flood_prep_other","canal_desilt_helped",
++   "activities_still_useful","useful_interventions","useful_access_kiosks",
++   "useful_latrines_sanitization","useful_training","useful_flood_awareness",
++   "useful_committees","useful_other","why_not_useful","most_positive_intervention",
++   "remaining_challenges","most_important_change","life_different_if_no_project"
++ )
+> 
+> missing_cols <- setdiff(expected_cols, names(df))
+> if (length(missing_cols) > 0) {
++   stop(paste("Missing expected columns in CSV:", paste(missing_cols, collapse=", ")))
++ }
+
+
+Demographics: Frequencies & Percentages
+village	n	pct	gender_hh	widow_single_mother	pwd	age_group	livelihood	income_band	aware_hfhk
+age_group
+NA	143	51.1	NA	NA	NA	36-59 years (Adult)	NA	NA	NA
+NA	81	28.9	NA	NA	NA	18-35 years (Youth)	NA	NA	NA
+NA	56	20.0	NA	NA	NA	60+ years (Elderly)	NA	NA	NA
+aware_hfhk
+NA	280	100.0	NA	NA	NA	NA	NA	NA	Yes
+gender_hh
+NA	140	50.0	Female	NA	NA	NA	NA	NA	NA
+NA	140	50.0	Male	NA	NA	NA	NA	NA	NA
+income_band
+NA	197	70.4	NA	NA	NA	NA	NA	0 - 10,000	NA
+NA	62	22.1	NA	NA	NA	NA	NA	10,001 - 20,000	NA
+NA	21	7.5	NA	NA	NA	NA	NA	20,001 and Above	NA
+livelihood
+NA	202	72.1	NA	NA	NA	NA	Farming	NA	NA
+NA	28	10.0	NA	NA	NA	NA	Casual Labour	NA	NA
+NA	28	10.0	NA	NA	NA	NA	Trade	NA	NA
+NA	17	6.1	NA	NA	NA	NA	Other, Specify	NA	NA
+NA	5	1.8	NA	NA	NA	NA	Salaried Employed	NA	NA
+pwd
+NA	254	90.7	NA	NA	No	NA	NA	NA	NA
+NA	26	9.3	NA	NA	Yes	NA	NA	NA	NA
+village
+Kabong'o	84	30.0	NA	NA	NA	NA	NA	NA	NA
+Kagola West	62	22.1	NA	NA	NA	NA	NA	NA	NA
+Kokech	54	19.3	NA	NA	NA	NA	NA	NA	NA
+Kogola East	31	11.1	NA	NA	NA	NA	NA	NA	NA
+Kaswa	26	9.3	NA	NA	NA	NA	NA	NA	NA
+Borda	23	8.2	NA	NA	NA	NA	NA	NA	NA
+widow_single_mother
+NA	140	50.0	NA	NA	NA	NA	NA	NA	NA
+NA	85	30.4	NA	No	NA	NA	NA	NA	NA
+NA	55	19.6	NA	Yes	NA	NA	NA	NA	NA
+
+Village × Gender of HH Head
+village	gender_hh	n	pct
+Borda	Female	12	52.2
+Borda	Male	11	47.8
+Kabong'o	Female	42	50.0
+Kabong'o	Male	42	50.0
+Kagola West	Female	31	50.0
+Kagola West	Male	31	50.0
+Kaswa	Female	13	50.0
+Kaswa	Male	13	50.0
+Kogola East	Male	16	51.6
+Kogola East	Female	15	48.4
+Kokech	Female	27	50.0
+Kokech	Male	27	50.0
+
+
+% who say project activities are still useful
+activities_still_useful	n	pct
+No	1	0.4
+Not sure/Don't know	3	1.1
+Yes	276	98.6
+
+
+Most Useful Interventions (Ranked)
+intervention	n	pct
+Hygiene education / training	248	24.1
+Access to clean water (kiosks)	247	24.0
+Improved sanitation facilities	244	23.7
+Flood preparedness awareness	191	18.5
+Active community committees	101	9.8
+Other	0	0.0
+
+
+Remaining Challenges: Keyword Frequency (quick scan)
+text	n
+water	91
+kiosk	64
+distance	48
+flood	25
+access	22
+hygiene	18
+sanitation	7
+latrine	3
+soap	3
+cost	2
+quality	1
+
+
+
+% using HFHK water as primary source (pattern-based)
+pct_hfhk_primary
+47.1
+
+
+
+Water source available year-round?
+water_year_round	n	pct
+No	56	20
+Yes	224	80
+
+Do you pay for water?
+pay_for_water	n	pct
+No	138	49.3
+Yes	142	50.7
+
+
+Is water cost affordable (among those who pay)?
+water_cost_affordable	n	pct
+No	9	6.3
+Yes	133	93.7
+
+
+Can PWDs easily use water points/latrines?
+pwd_ease_use	n	pct
+No	3	1.1
+With difficulty	14	5.0
+Yes (ramps/handrails)	9	3.2
+NA	254	90.7
+
+
+Current Household Latrine Type
+latrine_type	n	pct
+HFHK Flood-Resilient Latrine (latrine built or upgraded by the project to resist flooding, often elevated or reinforced)	37	13.2
+Improved Pit Latrine (a latrine with a proper slab and cover to safely separate excreta from human contact)	16	5.7
+Shared Latrine (used by more than one household, e.g., neighbors or extended family)	227	81.1
+
+HFHK Latrine Functionality During Floods
+latrine_flood_function	n	pct
+Yes	37	100
+
+
+Is latrine safe & usable during heavy rain/flooding?
+latrine_safe_heavy_rain	n	pct
+No	186	66.4
+Yes	94	33.6
+
+
+Do all household members use the latrine?
+all_members_use_latrine	n	pct
+Yes	280	100
+
+Has flood damage decreased since the project?
+flood_damage_decreased	n	pct
+No	78	27.9
+Not Sure	10	3.6
+Yes	192	68.6
+
+
+Have canal works helped reduce flooding?
+canal_desilt_helped	n	pct
+No	19	6.8
+Not sure	43	15.4
+Yes	218	77.9
+
+
+Handwashing Station at Home?
+handwashing_station	n	pct
+No	15	5.4
+Yes	265	94.6
+
+
+HWS: Observed Components
+component	n	pct
+Soap & water	260	99.6
+Ash & water	1	0.4
+Water only	0	0.0
+Nothing	0	0.0
+
+----- DRAFT RELEVANCE SUMMARY (auto) -----
+> cat(sprintf("- Sample size: %s households.\n", n_total))
+- Sample size: 280 households.
+> cat(sprintf("- Project activities still useful: %s%% (overall).\n", round(100*p_useful,1)))
+- Project activities still useful: 98.6% (overall).
+> cat("- Most frequently cited useful interventions:\n")
+- Most frequently cited useful interventions:
+> df_useful_long %>% arrange(desc(n)) %>% head(5) %>% 
++   mutate(line = paste0("   • ", intervention, " (n=", n, ")")) %>% pull(line) %>% cat(sep="\n")
+   • Hygiene education / training (n=248)
+   • Access to clean water (kiosks) (n=247)
+   • Improved sanitation facilities (n=244)
+   • Flood preparedness awareness (n=191)
+   • Active community committees (n=101)
+> cat("\n- Water source availability year-round and affordability tables saved to outputs/.\n")
+
+- Water source availability year-round and affordability tables saved to outputs/.
+> cat("- HFHK latrine satisfaction and flood functionality (if applicable) saved to outputs/.\n")
+- HFHK latrine satisfaction and flood functionality (if applicable) saved to outputs/.
+> cat("- Canal works & flood damage change: summary tables and stacked plots saved to outputs/.\n")
+- Canal works & flood damage change: summary tables and stacked plots saved to outputs/.
+> cat("- Handwashing station presence and components summarized for triangulation later.\n")
+- Handwashing station presence and components summarized for triangulation later.
+> cat("----- END SUMMARY -----\n")
+----- END SUMMARY -----
+
+
+B) Effectiveness (Did the project achieve its objectives?)
+> # ===============================
+> # BMZ DAC Criteria: EFFECTIVENESS (with Console Outputs)
+> # ===============================
+> 
+> # Load libraries
+> library(tidyverse)
+> library(readr)
+> library(openxlsx)
+> library(janitor)
+> library(ggplot2)
+> library(dplyr)
+> 
+> # Define working directories
+> input_file <- "C:/Users/Hp/Downloads/effectiveness_demographics.csv"
+> output_dir <- "C:/Users/Hp/Downloads/BMZ_OUTPUTS"
+> if(!dir.exists(output_dir)) dir.create(output_dir)
+> 
+> # Load dataset with encoding fix
+> df <- read_csv(input_file, locale = locale(encoding = "UTF-8")) %>% clean_names()
+New names:                                                                                          
+• `flood_prep_actions_dug_cleared` -> `flood_prep_actions_dug_cleared...113`
+• `flood_prep_actions_dug_cleared` -> `flood_prep_actions_dug_cleared...114`
+• `` -> `...144`
+• `` -> `...145`
+Rows: 280 Columns: 163
+── Column specification ────────────────────────────────────────────────────────────────────────────
+Delimiter: ","
+chr (94): enumerator, village, gender_hh, widow_single_mother, pwd, pwd_involved_planning, age_g...
+dbl (61): time_reason_closer, time_reason_shorter_queue, time_reason_reduced_cost, time_reason_i...
+lgl  (8): borehole_functional_reason, 10. Who is currently responsible for repairs and maintenan...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+> df[] <- lapply(df, function(x) if(is.character(x)) iconv(x, from="latin1", to="UTF-8") else x)
+> 
+> # -------------------------------
+> # Helper functions
+> # -------------------------------
+> save_plot <- function(plot, filename){
++   ggsave(filename = file.path(output_dir, filename), 
++          plot = plot, width = 8, height = 6, dpi = 300)
++ }
+> 
+> write_summary <- function(table, filename){
++   write.xlsx(table, file.path(output_dir, filename), overwrite = TRUE)
++ }
+> 
+> print_freq <- function(data, var, group=NULL){
++   if(!is.null(group)){
++     tab <- data %>% count(!!sym(group), !!sym(var)) %>%
++       group_by(!!sym(group)) %>%
++       mutate(perc = round(n/sum(n)*100,1))
++   } else {
++     tab <- data %>% count(!!sym(var)) %>%
++       mutate(perc = round(n/sum(n)*100,1))
++   }
++   print(tab)
++   return(tab)
++ }
+> 
+> # =======================================================
+> # 1. WATER ACCESS & TIME USE
+> # =======================================================
+> cat("\n--- WATER ACCESS & TIME USE ---\n")
+
+--- WATER ACCESS & TIME USE ---
+> 
+> # Frequencies
+> tab_kiosk <- print_freq(df, "kiosk_use_frequency", "village")
+# A tibble: 27 × 4
+# Groups:   village [6]
+   village     kiosk_use_frequency       n  perc
+   <chr>       <chr>                 <int> <dbl>
+ 1 Borda       "3\u00966 times/week"     1   4.3
+ 2 Borda       "Daily"                  16  69.6
+ 3 Borda       "Never"                   3  13  
+ 4 Borda       "Rarely"                  3  13  
+ 5 Kabong'o    "1\u00962 times/week"     1   1.2
+ 6 Kabong'o    "3\u00966 times/week"     4   4.8
+ 7 Kabong'o    "Daily"                  49  58.3
+ 8 Kabong'o    "Never"                  20  23.8
+ 9 Kabong'o    "Rarely"                 10  11.9
+10 Kagola West "1\u00962 times/week"     1   1.6
+# ℹ 17 more rows
+# ℹ Use `print(n = ...)` to see more rows
+> tab_time_change <- print_freq(df, "time_change", "gender_hh")
+# A tibble: 5 × 4
+# Groups:   gender_hh [2]
+  gender_hh time_change     n  perc
+  <chr>     <chr>       <int> <dbl>
+1 Female    Less           74  52.9
+2 Female    More            1   0.7
+3 Female    Same           65  46.4
+4 Male      Less           71  50.7
+5 Male      Same           69  49.3
+> 
+> # Save to Excel
+> write_summary(tab_kiosk, "tab_kiosk_use.xlsx")
+> write_summary(tab_time_change, "tab_time_change.xlsx")
+> 
+> # Plots
+> p1 <- ggplot(df, aes(x = kiosk_use_frequency, fill = village)) +
++   geom_bar(position = "dodge") +
++   labs(title = "Kiosk Use Frequency by Village", x = "Frequency", y = "Count")
+> save_plot(p1, "effectiveness_kiosk_use.png")
+> 
+> p2 <- ggplot(df, aes(x = time_change, fill = gender_hh)) +
++   geom_bar(position = "fill") +
++   labs(title = "Change in Water Fetching Time by Gender", x = "Change", y = "Proportion")
+> save_plot(p2, "effectiveness_time_change.png")
+> 
+> # =======================================================
+> # 2. HOUSEHOLD INCOME & LIVELIHOODS
+> # =======================================================
+> cat("\n--- HOUSEHOLD INCOME & LIVELIHOODS ---\n")
+
+--- HOUSEHOLD INCOME & LIVELIHOODS ---
+> 
+> tab_income <- print_freq(df, "income_increased")
+# A tibble: 2 × 3
+  income_increased     n  perc
+  <chr>            <int> <dbl>
+1 No                  65  23.2
+2 Yes                215  76.8
+> tab_income_village <- print_freq(df, "income_increased", "village")
+# A tibble: 12 × 4
+# Groups:   village [6]
+   village     income_increased     n  perc
+   <chr>       <chr>            <int> <dbl>
+ 1 Borda       No                   2   8.7
+ 2 Borda       Yes                 21  91.3
+ 3 Kabong'o    No                   3   3.6
+ 4 Kabong'o    Yes                 81  96.4
+ 5 Kagola West No                  17  27.4
+ 6 Kagola West Yes                 45  72.6
+ 7 Kaswa       No                   4  15.4
+ 8 Kaswa       Yes                 22  84.6
+ 9 Kogola East No                  12  38.7
+10 Kogola East Yes                 19  61.3
+11 Kokech      No                  27  50  
+12 Kokech      Yes                 27  50  
+> 
+> write_summary(tab_income, "tab_income_increase.xlsx")
+> 
+> # Pie chart
+> income_tab <- df %>% count(income_increased) %>%
++   mutate(perc = n/sum(n)*100)
+> 
+> p3 <- ggplot(income_tab, aes(x = "", y = perc, fill = income_increased)) +
++   geom_col(width = 1) + coord_polar("y") +
++   labs(title = "Proportion of Households Reporting Increased Income")
+> save_plot(p3, "effectiveness_income_increase.png")
+> 
+> # =======================================================
+> # 3. WATER QUALITY & INFRASTRUCTURE RELIABILITY
+> # =======================================================
+> cat("\n--- WATER QUALITY & INFRASTRUCTURE RELIABILITY ---\n")
+
+--- WATER QUALITY & INFRASTRUCTURE RELIABILITY ---
+> 
+> tab_borehole <- print_freq(df, "borehole_functional", "village")
+# A tibble: 6 × 4
+# Groups:   village [6]
+  village     borehole_functional     n  perc
+  <chr>       <chr>               <int> <dbl>
+1 Borda       Yes                    23   100
+2 Kabong'o    Yes                    84   100
+3 Kagola West Yes                    62   100
+4 Kaswa       Yes                    26   100
+5 Kogola East Yes                    31   100
+6 Kokech      Yes                    54   100
+> tab_water_quality <- print_freq(df, "water_quality_change")
+# A tibble: 2 × 3
+  water_quality_change                                      n  perc
+  <chr>                                                 <int> <dbl>
+1 Improved (minimal salinity, clearer, fewer illnesses)   242  86.4
+2 No change                                                38  13.6
+> 
+> write_summary(tab_borehole, "tab_borehole_functional.xlsx")
+> 
+> p4 <- ggplot(df, aes(x = borehole_functional, fill = village)) +
++   geom_bar(position = "dodge") +
++   labs(title = "Borehole Functionality by Village", x = "Functional?", y = "Count")
+> save_plot(p4, "effectiveness_borehole_functional.png")
+> 
+> # =======================================================
+> # 4. SANITATION & HYGIENE EFFECTIVENESS
+> # =======================================================
+> cat("\n--- SANITATION & HYGIENE EFFECTIVENESS ---\n")
+
+--- SANITATION & HYGIENE EFFECTIVENESS ---
+> 
+> tab_latrine_use <- print_freq(df, "hfkh_latrine_use", "village")
+# A tibble: 12 × 4
+# Groups:   village [6]
+   village     hfkh_latrine_use     n  perc
+   <chr>       <chr>            <int> <dbl>
+ 1 Borda       No                  18  78.3
+ 2 Borda       Yes                  5  21.7
+ 3 Kabong'o    No                  75  89.3
+ 4 Kabong'o    Yes                  9  10.7
+ 5 Kagola West No                  57  91.9
+ 6 Kagola West Yes                  5   8.1
+ 7 Kaswa       No                  16  61.5
+ 8 Kaswa       Yes                 10  38.5
+ 9 Kogola East No                  24  77.4
+10 Kogola East Yes                  7  22.6
+11 Kokech      No                  49  90.7
+12 Kokech      Yes                  5   9.3
+> tab_handwash <- print_freq(df, "place_to_wash_hands", "soap_available_today")
+# A tibble: 3 × 4
+# Groups:   soap_available_today [3]
+  soap_available_today place_to_wash_hands     n  perc
+  <chr>                <chr>               <int> <dbl>
+1 No                   Yes                     2   100
+2 Yes                  Yes                   262   100
+3 NA                   No                     16   100
+> 
+> write_summary(tab_latrine_use, "tab_latrine_use.xlsx")
+> write_summary(tab_handwash, "tab_handwash.xlsx")
+> 
+> p5 <- ggplot(df, aes(x = place_to_wash_hands, fill = soap_available_today)) +
++   geom_bar(position = "fill") +
++   labs(title = "Handwashing Facilities & Soap Availability", x = "Facility", y = "Proportion")
+> save_plot(p5, "effectiveness_handwashing.png")
+> 
+> # =======================================================
+> # 5. FLOOD PREPAREDNESS & RESILIENCE
+> # =======================================================
+> cat("\n--- FLOOD PREPAREDNESS & RESILIENCE ---\n")
+
+--- FLOOD PREPAREDNESS & RESILIENCE ---
+> 
+> tab_flood_prep <- print_freq(df, "household_prepared_for_seasonal_flooding", "village")
+# A tibble: 14 × 4
+# Groups:   village [6]
+   village     household_prepared_for_seasonal_flooding     n  perc
+   <chr>       <chr>                                    <int> <dbl>
+ 1 Borda       No                                           1   4.3
+ 2 Borda       Yes                                         22  95.7
+ 3 Kabong'o    Yes                                         84 100  
+ 4 Kagola West No                                          15  24.2
+ 5 Kagola West No change                                    4   6.5
+ 6 Kagola West Yes                                         43  69.4
+ 7 Kaswa       No                                           2   7.7
+ 8 Kaswa       No change                                    1   3.8
+ 9 Kaswa       Yes                                         23  88.5
+10 Kogola East No                                           9  29  
+11 Kogola East No change                                    2   6.5
+12 Kogola East Yes                                         20  64.5
+13 Kokech      No                                           1   1.9
+14 Kokech      Yes                                         53  98.1
+> tab_canal_awareness <- print_freq(df, "aware_canal_desilting")
+# A tibble: 2 × 3
+  aware_canal_desilting     n  perc
+  <chr>                 <int> <dbl>
+1 No                        3   1.1
+2 Yes                     277  98.9
+> 
+> write_summary(tab_flood_prep, "tab_flood_prep.xlsx")
+> 
+> p6 <- ggplot(df, aes(x = household_prepared_for_seasonal_flooding, fill = village)) +
++   geom_bar(position = "dodge") +
++   labs(title = "Household Preparedness for Seasonal Flooding", x = "Prepared?", y = "Count")
+> save_plot(p6, "effectiveness_flood_prep.png")
+> 
+> # =======================================================
+> # 6. YOUTH PARTICIPATION & CAPACITY BUILDING
+> # =======================================================
+> cat("\n--- YOUTH PARTICIPATION & CAPACITY BUILDING ---\n")
+
+--- YOUTH PARTICIPATION & CAPACITY BUILDING ---
+> 
+> tab_youth <- print_freq(df, "youth_participation_training", "village")
+# A tibble: 8 × 4
+# Groups:   village [6]
+  village     youth_participation_training     n  perc
+  <chr>       <chr>                        <int> <dbl>
+1 Borda       Yes                             23 100  
+2 Kabong'o    Yes                             84 100  
+3 Kagola West Not Sure                         3   4.8
+4 Kagola West Yes                             59  95.2
+5 Kaswa       Yes                             26 100  
+6 Kogola East Yes                             31 100  
+7 Kokech      No                               4   7.4
+8 Kokech      Yes                             50  92.6
+> tab_awareness <- print_freq(df, "usefulness_awareness_sessions")
+# A tibble: 4 × 3
+  usefulness_awareness_sessions     n  perc
+  <chr>                         <int> <dbl>
+1 Did not attend                    3   1.1
+2 Somewhat usefu                   82  29.3
+3 Very useful                     192  68.6
+4 NA                                3   1.1
+> 
+> write_summary(tab_youth, "tab_youth_participation.xlsx")
+> 
+> p7 <- ggplot(df, aes(x = youth_participation_training, fill = village)) +
++   geom_bar(position = "fill") +
++   labs(title = "Youth Participation by Village", x = "Participation", y = "Proportion")
+> save_plot(p7, "effectiveness_youth_participation.png")
+> 
+> # =======================================================
+> # AUTO-NARRATIVE POINTS
+> # =======================================================
+> cat("\n EFFECTIVENESS: AUTO-NARRATIVE NOTES \n")
+
+ EFFECTIVENESS: AUTO-NARRATIVE NOTES 
+> cat("- Majority of households reported changes in water access and reduced fetching time.\n")
+- Majority of households reported changes in water access and reduced fetching time.
+> cat("- A share of households indicated increased income, mainly from farming and small businesses.\n")
+- A share of households indicated increased income, mainly from farming and small businesses.
+> cat("- Borehole functionality varied across villages, with breakdown frequency influencing perceptions.\n")
+- Borehole functionality varied across villages, with breakdown frequency influencing perceptions.
+> cat("- Sanitation facilities improved but challenges remain during floods and at night for women and girls.\n")
+- Sanitation facilities improved but challenges remain during floods and at night for women and girls.
+> cat("- Flood preparedness actions and canal desilting awareness indicate strengthened resilience.\n")
+- Flood preparedness actions and canal desilting awareness indicate strengthened resilience.
+> cat("- Youth are participating in project activities, though roles differ across villages.\n")
+- Youth are participating in project activities, though roles differ across villages.
+> 
+

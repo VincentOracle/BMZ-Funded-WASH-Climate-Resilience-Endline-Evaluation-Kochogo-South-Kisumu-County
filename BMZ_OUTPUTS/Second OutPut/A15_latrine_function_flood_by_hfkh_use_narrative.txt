@@ -1,0 +1,3 @@
+A15: Latrine functional during flood (effectiveness dataset):
+ - HFHK user = TRUE; Functional = No; n= 3; pct= 7.3%
+ - HFHK user = TRUE; Functional = Yes; n=38; pct=92.7%

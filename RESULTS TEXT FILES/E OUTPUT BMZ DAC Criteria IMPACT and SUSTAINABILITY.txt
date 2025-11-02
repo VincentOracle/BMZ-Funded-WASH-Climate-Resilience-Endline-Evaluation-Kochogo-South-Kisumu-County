@@ -1,0 +1,263 @@
+> # ============================
+> # Combined Impact & Sustainability / Efficiency Analysis
+> # Outputs -> C:/Users/Hp/Downloads/BMZ_OUTPUTS
+> # ============================
+> 
+> # load libs
+> library(tidyverse)
+> library(janitor)
+> library(ggplot2)
+> library(wordcloud)
+> library(tm)
+> library(openxlsx)
+> library(sf)
+> library(ggthemes)
+> library(RColorBrewer)
+> 
+> # -----------------------------
+> # Set Output Directory
+> # -----------------------------
+> out_dir <- "C:/Users/Hp/Downloads/BMZ_OUTPUTS"
+> if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
+> 
+> # -----------------------------
+> # Load Data
+> # -----------------------------
+> # adjust filename/path if needed
+> data_path <- "C:/Users/Hp/Downloads/community_impact_sustainability_deomographic.csv"
+> df <- readr::read_csv(data_path, show_col_types = FALSE) %>% clean_names()
+>                                                                                                   
+> # -----------------------------
+> # Optional: rename very long column names if present
+> # Keep original names otherwise
+> # -----------------------------
+> # If your dataset contains a very long label like "4. In your opinion, was it worth the investment to build:"
+> # replace with a short safe name. Adjust mapping if actual column names differ.
+> rename_map <- list(
++   # example mapping - change left side if your raw csv had that exact name (pre-clean_names)
++   # after clean_names names usually are snake_case; nevertheless check presence and rename if needed
++   "4_in_your_opinion_was_it_worth_the_investment_to_build" = "worth_invest_building",
++   "what_delayed__took_longer" = "what_delayed_took_longer"
++ )
+> 
+> existing_renames <- intersect(names(df), names(rename_map))
+> if (length(existing_renames) > 0) {
++   for (n in existing_renames) {
++     df <- df %>% rename(!!rename_map[[n]] := !!sym(n))
++   }
++ }
+> 
+> # -----------------------------
+> # Variables of interest
+> # -----------------------------
+> demographic_vars <- c("enumerator", "village", "gender_hh", "widow_single_mother",
++                       "pwd", "pwd_involved_planning", "age_group", "livelihood",
++                       "income_band", "aware_hfhk")
+> 
+> # Impact & sustainability variables (as provided earlier)
+> impact_vars <- c("improvements_will_last", "maintenance_systems_in_place",
++                  "willing_pay_more_for_water", "project_strengthened_cohesion",
++                  "marginalized_involved", "community_afford_maintain")
+> 
+> # Open-text fields to analyze (automatically include those present)
+> open_text_candidates <- c("improvements_last_reasons_no",
++                           "community_not_afford_needs_whats_needed",
++                           "activities_unnecessary_explain",
++                           "recommend_why",
++                           "activities_unnecessary_explain") # add more candidates if needed
+> 
+> open_text_vars <- intersect(open_text_candidates, names(df))
+> 
+> # Distance & GPS fields
+> distance_field <- "distance_to_kiosk_m"
+> gps_fields <- c("gps_lat", "gps_lon", "gps_alt", "gps_accuracy")
+> 
+> # -----------------------------
+> # Prepare workbook for combined summary
+> # -----------------------------
+> wb <- createWorkbook()
+> addWorksheet(wb, "Overview")
+> 
+> # We'll store objects to write later
+> freq_tables <- list()
+> impact_freq_tables <- list()
+> demog_freq_tables <- list()
+> chi_summary <- data.frame(Var = character(), Demo = character(), P_value = numeric(), stringsAsFactors = FALSE)
+> chi_details <- list()
+> open_text_wordfreqs <- list()
+> 
+> # -----------------------------
+> # 1) Demographics: frequencies, plots, write to workbook + console
+> # -----------------------------
+> cat("=== DEMOGRAPHICS ===\n")
+=== DEMOGRAPHICS ===
+> for (var in demographic_vars) {
++   if (!var %in% names(df)) {
++     message("Skipping demographic var (not found): ", var)
++     next
++   }
++   tbl <- df %>%
++     count(.data[[var]]) %>%
++     arrange(desc(n)) %>%
++     mutate(percent = round(100 * n / sum(n), 1))
++   print(paste("Distribution of", var))
++   print(tbl)
++   
++   demog_freq_tables[[var]] <- tbl
++   
++   # write CSV/Excel per table
++   write.xlsx(tbl, file = file.path(out_dir, paste0("freq_demog_", var, ".xlsx")), overwrite = TRUE)
++   
++   # plot
++   p <- tbl %>%
++     ggplot(aes(x = reorder(!!sym(var), -n), y = n, fill = !!sym(var))) +
++     geom_col(show.legend = FALSE) +
++     geom_text(aes(label = paste0(n, " (", percent, "%)")), vjust = -0.4, size = 3) +
++     labs(title = paste("Distribution of", var), x = var, y = "Count") +
++     theme_minimal() +
++     theme(axis.text.x = element_text(angle = 30, hjust = 1))
++   ggsave(filename = file.path(out_dir, paste0("demog_", var, ".png")), plot = p, width = 8, height = 5)
++   
++   # add worksheet
++   addWorksheet(wb, paste0("demog_", var))
++   writeData(wb, sheet = paste0("demog_", var), x = tbl)
++ }
+[1] "Distribution of enumerator"
+# A tibble: 12 × 3
+   enumerator                  n percent
+   <chr>                   <int>   <dbl>
+ 1 Andericus Oguma            28     9.8
+ 2 Eveline Adhiambo Otieno    28     9.8
+ 3 Janet Wesonga              28     9.8
+ 4 Joy Dawince Otieno         28     9.8
+ 5 Mollet Atieno              28     9.8
+ 6 Samuel Muga                28     9.8
+ 7 Tom Akumu                  28     9.8
+ 8 Tom Ocharo                 28     9.8
+ 9 Wycliffe Osalo             28     9.8
+10 Elizabeth Anyango          14     4.9
+11 Judith Onyango             14     4.9
+12 NA                          6     2.1
+[1] "Distribution of village"
+# A tibble: 7 × 3
+  village         n percent
+  <chr>       <int>   <dbl>
+1 Kabong'o       84    29.4
+2 Kagola West    62    21.7
+3 Kokech         54    18.9
+4 Kogola East    31    10.8
+5 Kaswa          26     9.1
+6 Borda          23     8  
+7 NA              6     2.1
+[1] "Distribution of gender_hh"
+# A tibble: 3 × 3
+  gender_hh     n percent
+  <chr>     <int>   <dbl>
+1 Female      140    49  
+2 Male        140    49  
+3 NA            6     2.1
+[1] "Distribution of widow_single_mother"
+# A tibble: 3 × 3
+  widow_single_mother     n percent
+  <chr>               <int>   <dbl>
+1 NA                    146    51  
+2 No                     85    29.7
+3 Yes                    55    19.2
+[1] "Distribution of pwd"
+# A tibble: 3 × 3
+  pwd       n percent
+  <chr> <int>   <dbl>
+1 No      254    88.8
+2 Yes      26     9.1
+3 NA        6     2.1
+[1] "Distribution of pwd_involved_planning"
+# A tibble: 3 × 3
+  pwd_involved_planning     n percent
+  <chr>                 <int>   <dbl>
+1 NA                      260    90.9
+2 Yes                      25     8.7
+3 Don't know                1     0.3
+[1] "Distribution of age_group"
+# A tibble: 4 × 3
+  age_group               n percent
+  <chr>               <int>   <dbl>
+1 36-59 years (Adult)   143    50  
+2 18-35 years (Youth)    81    28.3
+3 60+ years (Elderly)    56    19.6
+4 NA                      6     2.1
+[1] "Distribution of livelihood"
+# A tibble: 6 × 3
+  livelihood            n percent
+  <chr>             <int>   <dbl>
+1 Farming             202    70.6
+2 Casual Labour        28     9.8
+3 Trade                28     9.8
+4 Other, Specify       17     5.9
+5 NA                    6     2.1
+6 Salaried Employed     5     1.7
+[1] "Distribution of income_band"
+# A tibble: 4 × 3
+  income_band          n percent
+  <chr>            <int>   <dbl>
+1 0 - 10,000         197    68.9
+2 10,001 - 20,000     62    21.7
+3 20,001 and Above    21     7.3
+4 NA                   6     2.1
+[1] "Distribution of aware_hfhk"
+# A tibble: 2 × 3
+  aware_hfhk     n percent
+  <chr>      <int>   <dbl>
+1 Yes          280    97.9
+2 NA             6     2.1
+> 
+> # -----------------------------
+> # 2) Impact & sustainability: frequencies, plots, write to workbook + console
+> # -----------------------------
+> cat("\n=== IMPACT & SUSTAINABILITY ===\n")
+
+=== IMPACT & SUSTAINABILITY ===
+> for (var in impact_vars) {
++   if (!var %in% names(df)) {
++     message("Skipping impact var (not found): ", var)
++     next
++   }
++   tbl <- df %>%
++     count(.data[[var]]) %>%
++     arrange(desc(n)) %>%
++     mutate(percent = round(100 * n / sum(n), 1))
++   print(paste("Responses for", var))
++   print(tbl)
++   
++   impact_freq_tables[[var]] <- tbl
++   write.xlsx(tbl, file = file.path(out_dir, paste0("freq_impact_", var, ".xlsx")), overwrite = TRUE)
++   
++   # plot
++   p <- tbl %>%
++     ggplot(aes(x = reorder(!!sym(var), -n), y = n, fill = !!sym(var))) +
++     geom_col(show.legend = FALSE) +
++     geom_text(aes(label = paste0(n, " (", percent, "%)")), vjust = -0.4, size = 3) +
++     labs(title = paste("Responses for", var), x = var, y = "Count") +
++     theme_minimal() +
++     theme(axis.text.x = element_text(angle = 30, hjust = 1))
++   ggsave(filename = file.path(out_dir, paste0("impact_", var, ".png")), plot = p, width = 8, height = 5)
++   
++   # add worksheet
++   addWorksheet(wb, paste0("impact_", var))
++   writeData(wb, sheet = paste0("impact_", var), x = tbl)
++ }
+[1] "Responses for improvements_will_last"
+# A tibble: 3 × 3
+  improvements_will_last         n percent
+  <chr>                      <int>   <dbl>
+1 Yes, with community effort   273    95.5
+2 Only with external support     7     2.4
+3 NA                             6     2.1
+[1] "Responses for maintenance_systems_in_place"
+# A tibble: 5 × 3
+  maintenance_systems_in_place       n percent
+  <chr>                          <int>   <dbl>
+1 Yes, a clear maintenance plan    241    84.3
+2 Some efforts, but inconsistent    30    10.5
+3 Don't know                         8     2.8
+4 NA                                 6     2.1
+5 No system                          1     0.3

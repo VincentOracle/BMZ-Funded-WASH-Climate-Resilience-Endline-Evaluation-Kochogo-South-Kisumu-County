@@ -1,0 +1,15 @@
+village,gender_hh,time_cat,n,pct
+Borda,Female,<30 min,12,100
+Borda,Male,<30 min,11,100
+Kabong'o,Female,<30 min,42,100
+Kabong'o,Male,<30 min,42,100
+Kagola West,Female,<30 min,31,100
+Kagola West,Male,<30 min,31,100
+Kaswa,Female,<30 min,13,100
+Kaswa,Male,<30 min,13,100
+Kogola East,Female,<30 min,15,100
+Kogola East,Male,<30 min,16,100
+Kokech,Female,<30 min,15,55.6
+Kokech,Female,>1 hour,12,44.4
+Kokech,Male,<30 min,17,63
+Kokech,Male,>1 hour,10,37
